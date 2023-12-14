@@ -28,7 +28,7 @@ struct Brick
 
     Rectangle getRect()
     {
-        Rectangle rect;
+        Rectangle rect = {0};
         rect.x = position.x;
         rect.y = position.y;
         rect.width = scale.x;
@@ -176,9 +176,9 @@ struct CeneManager
         int l_color = -1;
         int c_color = 0;
 
-        for(int j = 0; j <= columns; j++)
+        for(int j = 0; j <= c; j++)
         {
-            for(int i = 0; i <= rows; i++)
+            for(int i = 0; i <= r; i++)
             {
                 do{
                     c_color = rand()%6;
@@ -195,21 +195,21 @@ struct CeneManager
 
     void render()
     {
-        for(int i = 0; i <= rows*columns; i++)
+        for(int i = 0; i < bricks.size(); i++)
             if(bricks[i] != nullptr)
                 bricks[i]->render();
     }
 
-    void collide(Ball ball)
+    void collide(Ball* ball)
     {
-        for(int i = 0; i <= bricks.size(); i++)
+        for(int i = 0; i < bricks.size(); i++)
         {
             Brick* b = bricks[i];
             if(b != nullptr)
             {
                 Rectangle rect = b->getRect();
-                if(CheckCollisionCircleRec(ball.position, ball.scale, rect)){
-                    ball.collide(rect);
+                if(CheckCollisionCircleRec(ball->position, ball->scale, rect)){
+                    ball->collide(rect);
                     bricks[i] = nullptr;
                 }
             }
@@ -222,14 +222,14 @@ int main()
     InitWindow(WND_WIDTH, WND_HEIGHT, WND_TITLE);
     SetTargetFPS(60);
 
-    CeneManager cene = CeneManager(BRK_ROWS, 1);
+    CeneManager cene = CeneManager(BRK_ROWS, 5);
     Paddle player = Paddle({WND_WIDTH/2, WND_HEIGHT/1.2});
     Ball ball = Ball({WND_WIDTH/2, WND_HEIGHT/1.3});
 
     while(!WindowShouldClose())
     {
         ball.collide(player.getRect());
-        cene.collide(ball);
+        cene.collide(&ball);
         player.update();
         ball.update();
 
